@@ -1,11 +1,36 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_application_8/widgets/my_card.dart';
-
+import 'package:http/http.dart' as http;
 import '../widgets/additional_information.dart';
 import '../widgets/main_highlight.dart';
 
-class WeatherScreen extends StatelessWidget {
+class WeatherScreen extends StatefulWidget {
   const WeatherScreen({super.key});
+
+  @override
+  State<WeatherScreen> createState() => _WeatherScreenState();
+}
+
+class _WeatherScreenState extends State<WeatherScreen> {
+  Map data = {};
+  @override
+  void initState() {
+    super.initState();
+    getWeatherForecast();
+  }
+
+  Future getWeatherForecast() async {
+    final response = await http.get(
+      Uri.parse(
+        "https://api.open-meteo.com/v1/forecast?latitude=52.52&longitude=13.41&current=temperature_2m,wind_speed_10m&hourly=temperature_2m,relative_humidity_2m,wind_speed_10m",
+      ),
+    );
+    data = jsonDecode(response.body);
+    // print(data["hourly"]["time"][3]);
+    // debugPrint(data);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -36,7 +61,7 @@ class WeatherScreen extends StatelessWidget {
               scrollDirection: Axis.horizontal,
               child: Row(
                 children: [
-                  MyCard(icon: Icons.cloud, temperature: "102", time: "09:00"),
+                  MyCard(icon: Icons.cloud, temperature: "12", time: "09:00"),
                   MyCard(icon: Icons.sunny, temperature: "12", time: "10:00"),
                   MyCard(icon: Icons.cloud, temperature: "106", time: "11:00"),
                   MyCard(icon: Icons.sunny, temperature: "132", time: "12:00"),
